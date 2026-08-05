@@ -5,348 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS Task Tracker</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #1f3a93;
-        }
-
-        body.dark-mode {
-            background: #0f1117;
-            color: #e0e0e0;
-        }
-
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        .sidebar {
-            width: 220px;
-            background: white;
-            border-right: 1px solid #e0e0e0;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        body.dark-mode .sidebar {
-            background: #1a1a1a;
-            border-right-color: #333;
-        }
-
-        .header {
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        body.dark-mode .header {
-            border-bottom-color: #333;
-        }
-
-        .logo {
-            width: 32px;
-            height: 32px;
-            background: #FFB266;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 14px;
-        }
-
-        .logo-text {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .sidebar-section {
-            padding: 15px;
-        }
-
-        .sidebar-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        body.dark-mode .sidebar-title {
-            color: #999;
-        }
-
-        .client-list {
-            list-style: none;
-        }
-
-        .client-item {
-            padding: 8px 12px;
-            margin-bottom: 4px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: background 0.2s;
-        }
-
-        .client-item:hover {
-            background: #f0f0f0;
-        }
-
-        body.dark-mode .client-item:hover {
-            background: #333;
-        }
-
-        .client-item.active {
-            background: #1f3a93;
-            color: white;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #f8f9fa;
-        }
-
-        body.dark-mode .main-content {
-            background: #0f1117;
-        }
-
-        .top-bar {
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        body.dark-mode .top-bar {
-            background: #1a1a1a;
-            border-bottom-color: #333;
-        }
-
-        .top-bar h1 {
-            font-size: 24px;
-        }
-
-        .top-bar-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background: #1f3a93;
-            color: white;
-            cursor: pointer;
-            font-size: 13px;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background: #16298a;
-        }
-
-        .theme-toggle {
-            background: #FFB266;
-            padding: 8px 12px;
-        }
-
-        .theme-toggle:hover {
-            background: #ff9d4d;
-        }
-
-        .content-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .tasks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-        }
-
-        .task-card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border-left: 4px solid #1f3a93;
-        }
-
-        body.dark-mode .task-card {
-            background: #1a1a1a;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-
-        .task-card.high {
-            border-left-color: #ff4444;
-        }
-
-        .task-card.medium {
-            border-left-color: #FFB266;
-        }
-
-        .task-card.low {
-            border-left-color: #6CE673;
-        }
-
-        .task-header {
-            margin-bottom: 12px;
-        }
-
-        .task-name {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 5px;
-        }
-
-        .task-meta {
-            font-size: 12px;
-            color: #666;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        body.dark-mode .task-meta {
-            color: #999;
-        }
-
-        .badge {
-            background: #f0f0f0;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-        }
-
-        body.dark-mode .badge {
-            background: #333;
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .task-actions button {
-            padding: 6px 12px;
-            font-size: 11px;
-            flex: 1;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 8px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        body.dark-mode .modal-content {
-            background: #1a1a1a;
-        }
-
-        .modal-content h2 {
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 13px;
-            font-family: inherit;
-        }
-
-        body.dark-mode .form-group input,
-        body.dark-mode .form-group select,
-        body.dark-mode .form-group textarea {
-            background: #333;
-            border-color: #555;
-            color: #e0e0e0;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .modal-actions button {
-            flex: 1;
-        }
-
-        .close-btn {
-            background: #999;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-        }
-
-        body.dark-mode .empty-state {
-            color: #666;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #1f3a93; }
+        body.dark-mode { background: #0f1117; color: #e0e0e0; }
+        .container { display: flex; height: 100vh; }
+        .sidebar { width: 220px; background: white; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; }
+        body.dark-mode .sidebar { background: #1a1a1a; border-right-color: #333; }
+        .header { padding: 20px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px; }
+        body.dark-mode .header { border-bottom-color: #333; }
+        .logo { width: 32px; height: 32px; background: #FFB266; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
+        .sidebar-section { padding: 15px; }
+        .sidebar-title { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 10px; }
+        .client-list { list-style: none; }
+        .client-item { padding: 8px 12px; margin-bottom: 4px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .client-item:hover { background: #f0f0f0; }
+        .client-item.active { background: #1f3a93; color: white; }
+        .main-content { flex: 1; display: flex; flex-direction: column; }
+        .top-bar { background: white; border-bottom: 1px solid #e0e0e0; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
+        body.dark-mode .top-bar { background: #1a1a1a; border-bottom-color: #333; }
+        .content-area { flex: 1; overflow-y: auto; padding: 20px; }
+        .tasks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .task-card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #1f3a93; }
+        body.dark-mode .task-card { background: #1a1a1a; }
+        .task-card.high { border-left-color: #ff4444; }
+        .task-card.medium { border-left-color: #FFB266; }
+        .task-card.low { border-left-color: #6CE673; }
+        .task-name { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+        .task-meta { font-size: 12px; color: #666; display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .badge { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+        body.dark-mode .badge { background: #333; }
+        .task-actions { display: flex; gap: 8px; margin-top: 12px; }
+        button { padding: 8px 16px; border: none; border-radius: 4px; background: #1f3a93; color: white; cursor: pointer; font-size: 13px; }
+        button:hover { background: #16298a; }
+        .theme-toggle { background: #FFB266; }
+        .theme-toggle:hover { background: #ff9d4d; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 8px; padding: 25px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        body.dark-mode .modal-content { background: #1a1a1a; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-family: inherit; }
+        body.dark-mode .form-group input, body.dark-mode .form-group select, body.dark-mode .form-group textarea { background: #333; border-color: #555; color: #e0e0e0; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-actions button { flex: 1; }
+        .close-btn { background: #999; }
+        .loading { text-align: center; padding: 40px 20px; color: #666; }
     </style>
 </head>
 <body>
@@ -354,59 +58,51 @@
         <div class="sidebar">
             <div class="header">
                 <div class="logo">ST</div>
-                <div class="logo-text">Skipso</div>
+                <div style="font-size: 14px; font-weight: 600;">Skipso</div>
             </div>
-
             <div class="sidebar-section">
                 <div class="sidebar-title">Clients</div>
                 <ul class="client-list" id="clientList">
-                    <li class="client-item active" data-client="all" onclick="selectClient('all')">📊 All Tasks</li>
+                    <li class="client-item active" onclick="selectClient('all')">📊 All Tasks</li>
                 </ul>
             </div>
-
             <div class="sidebar-section">
-                <button onclick="openAddTaskModal()" style="width: 100%;">+ New Task</button>
+                <button onclick="addTaskClicked()" style="width: 100%;">+ New Task</button>
             </div>
         </div>
 
         <div class="main-content">
             <div class="top-bar">
                 <h1 id="pageTitle">All Tasks</h1>
-                <div class="top-bar-controls">
-                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-                </div>
+                <button class="theme-toggle" onclick="toggleDarkMode()">🌙</button>
             </div>
-
             <div class="content-area" id="contentArea">
-                <div class="loading">Loading tasks...</div>
+                <div class="loading">Loading...</div>
             </div>
         </div>
     </div>
 
     <div class="modal" id="taskModal">
         <div class="modal-content">
-            <h2 id="modalTitle">Add Task</h2>
-            <form id="taskForm" onsubmit="saveTask(event)">
+            <h2>Add Task</h2>
+            <form onsubmit="saveTask(event)">
                 <div class="form-group">
                     <label>Task Name *</label>
                     <input type="text" id="taskName" required>
                 </div>
-
                 <div class="form-group">
                     <label>Client *</label>
                     <input type="text" id="client" required>
                 </div>
-
                 <div class="form-group">
                     <label>Owner *</label>
                     <select id="owner" required>
-                        <option value="">Select owner...</option>
+                        <option value="">Select</option>
                         <option value="Beau">Beau</option>
                         <option value="Rick">Rick</option>
                         <option value="Dixie">Dixie</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Priority</label>
                     <select id="priority">
@@ -415,7 +111,6 @@
                         <option value="Low">Low</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Status</label>
                     <select id="status">
@@ -425,20 +120,17 @@
                         <option value="Blocked">Blocked</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Due Date</label>
                     <input type="date" id="dueDate">
                 </div>
-
                 <div class="form-group">
-                    <label>Context / Notes</label>
+                    <label>Notes</label>
                     <textarea id="context" rows="3"></textarea>
                 </div>
-
                 <div class="modal-actions">
-                    <button type="submit">Save Task</button>
-                    <button type="button" class="close-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit">Save</button>
+                    <button type="button" class="close-btn" onclick="closeTaskModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -446,125 +138,117 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase Config
-        const SUPABASE_URL = 'https://wqkfewipbdbkherbmowz.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxa2Zld2lwYmRia2hlcmJtb3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5MzY4NDEsImV4cCI6MjEwMTUxMjg0MX0.e50Fw1oHG0l0KubMrjJamwKVSUQ5acLpjmnO-zNOSYE';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let app = {
+            supabase: null,
+            tasks: [],
+            currentClient: 'all',
+            editingId: null
+        };
 
-        let tasks = [];
-        let currentClient = 'all';
-        let editingTaskId = null;
-
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            loadTasks();
-            loadTheme();
-            setupRealtimeSubscription();
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                app.supabase = window.supabase.createClient(
+                    'https://wqkfewipbdbkherbmowz.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxa2Zld2lwYmRia2hlcmJtb3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5MzY4NDEsImV4cCI6MjEwMTUxMjg0MX0.e50Fw1oHG0l0KubMrjJamwKVSUQ5acLpjmnO-zNOSYE'
+                );
+                loadDarkMode();
+                await refreshTasks();
+            } catch (err) {
+                console.error('Init error:', err);
+            }
         });
 
-        async function loadTasks() {
+        async function refreshTasks() {
             try {
-                const { data, error } = await supabase
-                    .from('tasks')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-                tasks = data || [];
+                const { data } = await app.supabase.from('tasks').select('*').order('created_at', { ascending: false });
+                app.tasks = data || [];
                 populateClients();
-                renderTasks();
-            } catch (error) {
-                console.error('Error loading tasks:', error);
-                document.getElementById('contentArea').innerHTML = '<div class="empty-state">Error loading tasks</div>';
+                render();
+            } catch (err) {
+                console.error('Load error:', err);
             }
         }
 
-        function setupRealtimeSubscription() {
-            supabase.channel('tasks').on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => loadTasks()).subscribe();
-        }
-
         function populateClients() {
-            const clients = [...new Set(tasks.map(t => t.client))].sort();
+            const clients = [...new Set(app.tasks.map(t => t.client || 'Unknown'))].sort();
             const list = document.getElementById('clientList');
-            list.innerHTML = '<li class="client-item active" data-client="all" onclick="selectClient(\'all\')">📊 All Tasks</li>';
-            clients.forEach(client => {
+            list.innerHTML = '<li class="client-item active" onclick="selectClient(\'all\')">📊 All Tasks</li>';
+            clients.forEach(c => {
                 const li = document.createElement('li');
                 li.className = 'client-item';
-                li.textContent = client;
-                li.onclick = () => selectClient(client);
+                li.textContent = c;
+                li.onclick = () => selectClient(c);
                 list.appendChild(li);
             });
         }
 
-        function selectClient(client) {
-            currentClient = client;
-            document.querySelectorAll('.client-item').forEach(item => {
-                item.classList.toggle('active', item.dataset.client === client || (client === 'all' && item.textContent.includes('All')));
-            });
-            document.getElementById('pageTitle').textContent = client === 'all' ? 'All Tasks' : client;
-            renderTasks();
+        function selectClient(name) {
+            app.currentClient = name;
+            document.querySelectorAll('.client-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('pageTitle').textContent = name === 'all' ? 'All Tasks' : name;
+            render();
         }
 
-        function renderTasks() {
-            const filtered = currentClient === 'all' ? tasks : tasks.filter(t => t.client === currentClient);
-
+        function render() {
+            const filtered = app.currentClient === 'all' ? app.tasks : app.tasks.filter(t => t.client === app.currentClient);
             if (filtered.length === 0) {
-                document.getElementById('contentArea').innerHTML = '<div class="empty-state">No tasks yet</div>';
+                document.getElementById('contentArea').innerHTML = '<div class="loading">No tasks yet</div>';
                 return;
             }
-
-            const html = filtered.map(task => `
-                <div class="task-card ${task.priority.toLowerCase()}">
-                    <div class="task-header">
-                        <div class="task-name">${task.taskName}</div>
-                        <div class="task-meta">
-                            <span class="badge">${task.status}</span>
-                            <span class="badge">${task.priority}</span>
-                            <span class="badge">${task.owner}</span>
-                        </div>
+            const html = filtered.map(t => `
+                <div class="task-card ${(t.priority || 'medium').toLowerCase()}">
+                    <div class="task-name">${t.taskName || 'Untitled'}</div>
+                    <div class="task-meta">
+                        <span class="badge">${t.status || 'To-do'}</span>
+                        <span class="badge">${t.priority || 'Medium'}</span>
+                        <span class="badge">${t.owner || 'Unassigned'}</span>
                     </div>
-                    ${task.context ? `<p style="font-size: 13px; margin: 10px 0; color: #666;">${task.context}</p>` : ''}
-                    ${task.dueDate ? `<p style="font-size: 12px; color: #999;">Due: ${task.dueDate}</p>` : ''}
+                    ${t.context ? `<p style="font-size: 13px; margin-bottom: 10px; color: #666;">${t.context}</p>` : ''}
+                    ${t.dueDate ? `<p style="font-size: 12px; color: #999;">Due: ${t.dueDate}</p>` : ''}
                     <div class="task-actions">
-                        <button onclick="editTask('${task.id}')">Edit</button>
-                        <button onclick="deleteTask('${task.id}')">Delete</button>
+                        <button onclick="editTaskClicked('${t.id}')">Edit</button>
+                        <button onclick="deleteTaskClicked('${t.id}')">Delete</button>
                     </div>
                 </div>
             `).join('');
-
             document.getElementById('contentArea').innerHTML = `<div class="tasks-grid">${html}</div>`;
         }
 
-        function openAddTaskModal() {
-            editingTaskId = null;
-            document.getElementById('modalTitle').textContent = 'Add Task';
-            document.getElementById('taskForm').reset();
+        function addTaskClicked() {
+            app.editingId = null;
+            document.getElementById('taskName').value = '';
+            document.getElementById('client').value = '';
+            document.getElementById('owner').value = '';
+            document.getElementById('priority').value = 'Medium';
+            document.getElementById('status').value = 'To-do';
+            document.getElementById('dueDate').value = '';
+            document.getElementById('context').value = '';
             document.getElementById('taskModal').classList.add('active');
         }
 
-        function editTask(id) {
-            const task = tasks.find(t => t.id === id);
+        function editTaskClicked(id) {
+            const task = app.tasks.find(t => t.id === id);
             if (!task) return;
-            editingTaskId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Task';
-            document.getElementById('taskName').value = task.taskName;
-            document.getElementById('client').value = task.client;
-            document.getElementById('owner').value = task.owner;
-            document.getElementById('priority').value = task.priority;
-            document.getElementById('status').value = task.status;
+            app.editingId = id;
+            document.getElementById('taskName').value = task.taskName || '';
+            document.getElementById('client').value = task.client || '';
+            document.getElementById('owner').value = task.owner || '';
+            document.getElementById('priority').value = task.priority || 'Medium';
+            document.getElementById('status').value = task.status || 'To-do';
             document.getElementById('dueDate').value = task.dueDate || '';
             document.getElementById('context').value = task.context || '';
             document.getElementById('taskModal').classList.add('active');
         }
 
-        function closeModal() {
+        function closeTaskModal() {
             document.getElementById('taskModal').classList.remove('active');
-            editingTaskId = null;
+            app.editingId = null;
         }
 
         async function saveTask(e) {
             e.preventDefault();
-            const taskData = {
+            const data = {
                 taskName: document.getElementById('taskName').value,
                 client: document.getElementById('client').value,
                 owner: document.getElementById('owner').value,
@@ -579,37 +263,37 @@
             };
 
             try {
-                if (editingTaskId) {
-                    await supabase.from('tasks').update(taskData).eq('id', editingTaskId);
+                if (app.editingId) {
+                    await app.supabase.from('tasks').update(data).eq('id', app.editingId);
                 } else {
-                    taskData.id = Date.now().toString();
-                    taskData.createdAt = new Date().toISOString();
-                    await supabase.from('tasks').insert([taskData]);
+                    data.id = Date.now().toString();
+                    data.createdAt = new Date().toISOString();
+                    await app.supabase.from('tasks').insert([data]);
                 }
-                closeModal();
-                loadTasks();
-            } catch (error) {
-                alert('Error: ' + error.message);
+                closeTaskModal();
+                await refreshTasks();
+            } catch (err) {
+                alert('Error: ' + err.message);
             }
         }
 
-        async function deleteTask(id) {
-            if (!confirm('Delete this task?')) return;
+        async function deleteTaskClicked(id) {
+            if (!confirm('Delete?')) return;
             try {
-                await supabase.from('tasks').delete().eq('id', id);
-                loadTasks();
-            } catch (error) {
-                alert('Error: ' + error.message);
+                await app.supabase.from('tasks').delete().eq('id', id);
+                await refreshTasks();
+            } catch (err) {
+                alert('Error: ' + err.message);
             }
         }
 
-        function toggleTheme() {
+        function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         }
 
-        function loadTheme() {
-            if (localStorage.getItem('theme') === 'dark') {
+        function loadDarkMode() {
+            if (localStorage.getItem('darkMode') === 'true') {
                 document.body.classList.add('dark-mode');
             }
         }
