@@ -988,6 +988,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // Dark mode toggle
     function initDarkMode() {
@@ -1005,33 +1006,10 @@
     }
 
     // ============================================
-    // SUPABASE CONFIGURATION
+    // GOOGLE APPS SCRIPT CONFIGURATION
     // ============================================
     const SUPABASE_URL = 'https://wqkfewipbdbkherbmowz.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxa2Zld2lwYmRia2hlcmJtb3d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5MzY4NDEsImV4cCI6MjEwMTUxMjg0MX0.e50Fw1oHG0l0KubMrjJamwKVSUQ5acLpjmnO-zNOSYE';
-    let supabase = null;
-
-    // Helper function to ensure Supabase is loaded and initialized
-    async function getSupabase() {
-      if (supabase) return supabase;
-      
-      // Wait for window.supabase to be available (max 5 seconds)
-      let attempts = 0;
-      const maxAttempts = 50;
-      
-      while (!window.supabase && attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        attempts++;
-      }
-      
-      if (!window.supabase) {
-        throw new Error('Supabase library failed to load. Please refresh the page.');
-      }
-      
-      // Initialize Supabase
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      return supabase;
-    }
 
     const CLIENTS_KEY = 'cs_clients';
     const OWNERS_KEY = 'cs_owners';
@@ -1059,29 +1037,32 @@
 
     async function loadData() {
       try {
-        const db = await getSupabase();
-        const { data: tasksData, error } = await db.from('tasks').select('*');
+        if (!window.supabase) {
+          // Fallback if library hasn't loaded
+          tasks = [];
+          clients = ['Plexal', 'ORE Catapult', 'ACE Collab Hub', 'Hector Health', 'IDC'];
+          owners = ['Beau', 'Rick', 'Dixie'];
+          pinnedClients = ['Plexal', 'ORE Catapult'];
+          if (!activeTab) activeTab = 'Dashboard';
+          render();
+          return;
+        }
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const { data: tasksData, error } = await supabase.from('tasks').select('*');
         if (error) throw error;
         
         tasks = Array.isArray(tasksData) ? tasksData : [];
-        
-        // Extract clients from tasks
         clients = [...new Set(tasks.map(t => t.client || 'Unknown'))].sort();
-        if (clients.length === 0) {
-          clients = ['Plexal', 'ORE Catapult', 'ACE Collab Hub', 'Hector Health', 'IDC'];
-        }
+        if (clients.length === 0) clients = ['Plexal', 'ORE Catapult', 'ACE Collab Hub', 'Hector Health', 'IDC'];
         
-        // Fixed owners
         owners = ['Beau', 'Rick', 'Dixie'];
-        
-        // Load pinned clients from localStorage
         pinnedClients = JSON.parse(localStorage.getItem(PINNED_CLIENTS_KEY)) || ['Plexal', 'ORE Catapult'];
 
         if (!activeTab) activeTab = 'Dashboard';
         render();
       } catch (error) {
         console.error('Error loading data:', error);
-        // Fallback defaults
         tasks = [];
         clients = ['Plexal', 'ORE Catapult', 'ACE Collab Hub', 'Hector Health', 'IDC'];
         owners = ['Beau', 'Rick', 'Dixie'];
@@ -1093,7 +1074,6 @@
 
     async function saveData() {
       try {
-        // Save pinned clients to localStorage
         localStorage.setItem(PINNED_CLIENTS_KEY, JSON.stringify(pinnedClients));
       } catch (error) {
         console.error('Error saving data:', error);
@@ -1185,16 +1165,15 @@
         id: Date.now().toString(),
         client,
         ...taskData,
-        subtasks: JSON.stringify([]),
-        comments: JSON.stringify([]),
+        subtasks: [],
+        comments: [],
         createdAt: new Date().toISOString(),
       };
       
       try {
-        const db = await getSupabase();
-        const { error } = await db.from('tasks').insert([newTask]);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const { error } = await supabase.from('tasks').insert([newTask]);
         if (error) throw error;
-        
         await loadData();
       } catch (error) {
         console.error('Error adding task:', error);
@@ -1212,10 +1191,9 @@
         };
         
         try {
-          const db = await getSupabase();
-          const { error } = await db.from('tasks').insert([newTask]);
+          const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          const { error } = await supabase.from('tasks').insert([newTask]);
           if (error) throw error;
-          
           await loadData();
         } catch (error) {
           console.error('Error duplicating task:', error);
@@ -1230,10 +1208,9 @@
         const updatedTask = { ...task, ...updates };
         
         try {
-          const db = await getSupabase();
-          const { error } = await db.from('tasks').update(updatedTask).eq('id', taskId);
+          const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          const { error } = await supabase.from('tasks').update(updatedTask).eq('id', taskId);
           if (error) throw error;
-          
           await loadData();
         } catch (error) {
           console.error('Error updating task:', error);
@@ -1245,10 +1222,9 @@
 
     async function deleteTask(taskId) {
       try {
-        const db = await getSupabase();
-        const { error } = await db.from('tasks').delete().eq('id', taskId);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const { error } = await supabase.from('tasks').delete().eq('id', taskId);
         if (error) throw error;
-        
         selectedTasks.delete(taskId);
         await loadData();
       } catch (error) {
