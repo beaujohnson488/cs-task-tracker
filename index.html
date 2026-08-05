@@ -1052,7 +1052,22 @@
         const { data: tasksData, error } = await supabase.from('tasks').select('*');
         if (error) throw error;
         
-        tasks = Array.isArray(tasksData) ? tasksData : [];
+        // Convert lowercase database columns to camelCase for the app
+        tasks = Array.isArray(tasksData) ? tasksData.map(t => ({
+          id: t.id,
+          client: t.client,
+          taskName: t.taskname,
+          owner: t.owner,
+          priority: t.priority,
+          status: t.status,
+          dueDate: t.duedate,
+          context: t.context,
+          handoverTo: t.handoverto,
+          handoverNotes: t.handovernotes,
+          subtasks: t.subtasks,
+          comments: t.comments,
+          createdAt: t.createdat
+        })) : [];
         clients = [...new Set(tasks.map(t => t.client || 'Unknown'))].sort();
         if (clients.length === 0) clients = ['Plexal', 'ORE Catapult', 'ACE Collab Hub', 'Hector Health', 'IDC'];
         
@@ -1172,7 +1187,22 @@
       
       try {
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const { error } = await supabase.from('tasks').insert([newTask]);
+        const dbTask = {
+          id: newTask.id,
+          client: newTask.client,
+          taskname: newTask.taskName,
+          owner: newTask.owner,
+          priority: newTask.priority,
+          status: newTask.status,
+          duedate: newTask.dueDate,
+          context: newTask.context,
+          handoverto: newTask.handoverTo,
+          handovernotes: newTask.handoverNotes,
+          subtasks: newTask.subtasks,
+          comments: newTask.comments,
+          createdat: newTask.createdAt
+        };
+        const { error } = await supabase.from('tasks').insert([dbTask]);
         if (error) throw error;
         await loadData();
       } catch (error) {
@@ -1192,7 +1222,22 @@
         
         try {
           const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          const { error } = await supabase.from('tasks').insert([newTask]);
+          const dbTask = {
+            id: newTask.id,
+            client: newTask.client,
+            taskname: newTask.taskName,
+            owner: newTask.owner,
+            priority: newTask.priority,
+            status: newTask.status,
+            duedate: newTask.dueDate,
+            context: newTask.context,
+            handoverto: newTask.handoverTo,
+            handovernotes: newTask.handoverNotes,
+            subtasks: newTask.subtasks,
+            comments: newTask.comments,
+            createdat: newTask.createdAt
+          };
+          const { error } = await supabase.from('tasks').insert([dbTask]);
           if (error) throw error;
           await loadData();
         } catch (error) {
@@ -1209,7 +1254,20 @@
         
         try {
           const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          const { error } = await supabase.from('tasks').update(updatedTask).eq('id', taskId);
+          const dbTask = {
+            taskname: updatedTask.taskName,
+            client: updatedTask.client,
+            owner: updatedTask.owner,
+            priority: updatedTask.priority,
+            status: updatedTask.status,
+            duedate: updatedTask.dueDate,
+            context: updatedTask.context,
+            handoverto: updatedTask.handoverTo,
+            handovernotes: updatedTask.handoverNotes,
+            subtasks: updatedTask.subtasks,
+            comments: updatedTask.comments
+          };
+          const { error } = await supabase.from('tasks').update(dbTask).eq('id', taskId);
           if (error) throw error;
           await loadData();
         } catch (error) {
