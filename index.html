@@ -1035,39 +1035,10 @@
     const statuses = ['To-do', 'In Progress', 'Blocked', 'Done'];
     const priorities = ['High', 'Medium', 'Low'];
 
-
-    // Initialize Supabase on library load
-    async function initSupabase() {
-      return new Promise((resolve) => {
-        const checkSupabase = setInterval(() => {
-          if (window.supabase) {
-            clearInterval(checkSupabase);
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('✅ Supabase initialized');
-            resolve();
-          }
-        }, 100);
-        
-        // Timeout after 5 seconds
-        setTimeout(() => {
-          clearInterval(checkSupabase);
-          console.warn('⚠️ Supabase library did not load');
-          resolve();
-        }, 5000);
-      });
-    }
-
     async function loadData() {
       try {
         if (!supabase) {
-          console.warn('Supabase not ready, using fallback');
-          tasks = [];
-          clients = ['Plexal', 'ORE Catapult', 'ACE Collab Hub', 'Hector Health', 'IDC'];
-          owners = ['Beau', 'Rick', 'Dixie'];
-          pinnedClients = ['Plexal', 'ORE Catapult'];
-          if (!activeTab) activeTab = 'Dashboard';
-          render();
-          return;
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
         
         const { data: tasksData, error } = await supabase.from('tasks').select('*');
@@ -1202,16 +1173,13 @@
       
       try {
         if (!supabase) {
-          alert('Supabase is not initialized. Please refresh and try again.');
-          return;
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
         
         const { error } = await supabase.from('tasks').insert([newTask]);
         if (error) throw error;
         
-        await await initSupabase();
-awawait initSupabase();
-    await loadData();
+        await loadData();
       } catch (error) {
         console.error('Error adding task:', error);
         alert('Error adding task: ' + error.message);
@@ -1229,16 +1197,13 @@ awawait initSupabase();
         
         try {
           if (!supabase) {
-            alert('Supabase is not initialized. Please refresh and try again.');
-            return;
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           }
           
           const { error } = await supabase.from('tasks').insert([newTask]);
           if (error) throw error;
           
-          await await initSupabase();
-awawait initSupabase();
-    await loadData();
+          await loadData();
         } catch (error) {
           console.error('Error duplicating task:', error);
           alert('Error duplicating task: ' + error.message);
@@ -1253,16 +1218,13 @@ awawait initSupabase();
         
         try {
           if (!supabase) {
-            alert('Supabase is not initialized. Please refresh and try again.');
-            return;
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           }
           
           const { error } = await supabase.from('tasks').update(updatedTask).eq('id', taskId);
           if (error) throw error;
           
-          await await initSupabase();
-awawait initSupabase();
-    await loadData();
+          await loadData();
         } catch (error) {
           console.error('Error updating task:', error);
           alert('Error updating task: ' + error.message);
@@ -1274,17 +1236,14 @@ awawait initSupabase();
     async function deleteTask(taskId) {
       try {
         if (!supabase) {
-          alert('Supabase is not initialized. Please refresh and try again.');
-          return;
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
         
         const { error } = await supabase.from('tasks').delete().eq('id', taskId);
         if (error) throw error;
         
         selectedTasks.delete(taskId);
-        await await initSupabase();
-awawait initSupabase();
-    await loadData();
+        await loadData();
       } catch (error) {
         console.error('Error deleting task:', error);
         alert('Error deleting task: ' + error.message);
@@ -2086,9 +2045,7 @@ awawait initSupabase();
 
     initDarkMode();
     (async () => {
-      await await initSupabase();
-awawait initSupabase();
-    await loadData();
+      await loadData();
       render();
     })();
   </script>
